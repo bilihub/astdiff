@@ -27,20 +27,27 @@ class AnalyzerEngine:
         if not os.path.exists(new_file_path):
             raise FileNotFoundError(f"New file not found: {new_file_path}")
             
-        # 1. Parse both files
-        old_parser = ParserFactory.get_parser(old_file_path)
-        new_parser = ParserFactory.get_parser(new_file_path)
         
-        old_funcs = old_parser.parse_file(old_file_path)
-        new_funcs = new_parser.parse_file(new_file_path)
-        
-        # 2. Analyze differences
-        if self.use_ast_diff:
-            from .ast_diff import ASTDiffer
-            ast_analyzer = ASTDiffer()
-            diff_result = ast_analyzer.analyze_functions_ast(old_funcs, new_funcs)
+
+        if old_file_path.lower().endswith('.xml') and new_file_path.lower().endswith('.xml'):
+            from core.xml_analyzer import XMLAnalyzer
+            xml_analyzer = XMLAnalyzer(excludes=self.excludes)
+            diff_result = DiffResult()
+            xml_analyzer.compare_single_xml(old_file_path, new_file_path, os.path.basename(new_file_path), diff_result)
         else:
-            diff_result = self.analyzer.analyze_functions(old_funcs, new_funcs, ignore_formatting=ignore_formatting)
+            # 1. Parse both files
+            old_parser = ParserFactory.get_parser(old_file_path)
+            new_parser = ParserFactory.get_parser(new_file_path)
+            
+            old_funcs = old_parser.parse_file(old_file_path)
+            new_funcs = new_parser.parse_file(new_file_path)
+            # 2. Analyze differences
+            if self.use_ast_diff:
+                from .ast_diff import ASTDiffer
+                ast_analyzer = ASTDiffer()
+                diff_result = ast_analyzer.analyze_functions_ast(old_funcs, new_funcs)
+            else:
+                diff_result = self.analyzer.analyze_functions(old_funcs, new_funcs, ignore_formatting=ignore_formatting)
         
         # 3. Calculate standardization rate using the extension interface
         std_rate = self.stn_calculator.calculate(diff_result)
@@ -125,8 +132,7 @@ class AnalyzerEngine:
             return False
             
         ext = os.path.splitext(file_path)[1].lower()
-        # return ext in ('.c', '.h', '.cpp', '.cxx', '.cc', '.hpp', '.hxx', '.xml')
-        return ext in ('.c', '.h', '.cpp', '.cxx', '.cc', '.hpp', '.hxx')
+        return ext in ('.c', '.h', '.cpp', '.cxx', '.cc', '.hpp', '.hxx', '.xml')
 
     def _collect_functions_from_dir(self, directory: str) -> list:
         funcs = []
