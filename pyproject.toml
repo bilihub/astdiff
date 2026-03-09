@@ -1,0 +1,20 @@
+[project]
+name = "stddiff-core"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "charset-normalizer>=3.4.5",
+    "pyside6>=6.10.2",
+    "pyside6-fluentui-qml>=1.6.7",
+    "tree-sitter>=0.25.2",
+    "tree-sitter-c>=0.24.1",
+    "tree-sitter-cpp>=0.23.4",
+    "tree-sitter-xml>=0.7.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

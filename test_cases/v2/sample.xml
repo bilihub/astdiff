@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration name="SystemConfig" version="1.1">
+    <!-- Server settings -->
+    <server id="main">
+        <host>192.168.1.10</host>
+        <port>8080</port>
+        <ssl enabled="true" />
+    </server>
+
+    <!-- Logging configuration -->
+    <logging>
+        <level>DEBUG</level>
+        <file>app_debug.log</file>
+    </logging>
+    
+    <features>
+        <feature name="auth" enabled="true"/>
+        <feature name="cache" enabled="true"/>
+    </features>
+
+    <database>
+        <url>jdbc:mysql://localhost:3306/db</url>
+    </database>
+</configuration>
